@@ -47,10 +47,17 @@ git clone <repository-url>
 cd checker
 ```
 
-### De Tool Starten
+### De AI Governance Checker Starten
 ```bash
 python main.py
 ```
+
+### De Agenda Applicatie Starten
+```bash
+python agenda.py
+```
+
+Een eenvoudige kalender/agenda tool om afspraken te beheren. Zie [agenda_lib/README.md](agenda_lib/README.md) voor meer informatie.
 
 ### Navigatie
 De tool heeft een interactief menu systeem:
@@ -85,7 +92,8 @@ De tool heeft een interactief menu systeem:
 
 ```
 checker/
-├── main.py                          # Hoofdapplicatie
+├── main.py                          # AI Governance Checker hoofdapplicatie
+├── agenda.py                        # Agenda/Kalender applicatie
 ├── src/
 │   ├── assessment/
 │   │   └── readiness.py            # AI readiness assessment module
@@ -95,6 +103,10 @@ checker/
 │   │   └── framework.py            # Governance framework module
 │   └── reports/
 │       └── generator.py            # Rapport generatie module
+├── agenda_lib/                      # Agenda applicatie module
+│   ├── event.py                     # Event class
+│   ├── calendar_manager.py         # Kalender beheer
+│   └── README.md                   # Agenda documentatie
 ├── templates/
 │   └── sessie_voorbereiding.md     # Sessie voorbereiding template
 ├── tests/
