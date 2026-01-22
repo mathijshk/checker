@@ -1,0 +1,11 @@
+# Dependencies for AI Governance Checker
+
+# Core dependencies
+# TODO: Add specific packages as modules are implemented
+
+# Potential future dependencies:
+# - pandas: for data analysis
+# - reportlab: for PDF generation
+# - markdown: for markdown processing
+# - pyyaml: for configuration files
+# - click: for CLI interface
