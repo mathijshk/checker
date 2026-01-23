@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Governance Assessment - Vragenlijst</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <h1>AI Governance Assessment</h1>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <p class="progress-text">Vraag <span id="currentQuestion">1</span> van <span id="totalQuestions">{{ questions|length }}</span></p>
+        </header>
+
+        <main>
+            <form id="assessmentForm">
+                {% for question in questions %}
+                <div class="question-card" id="question-{{ question.id }}" {% if question.id != 1 %}style="display: none;"{% endif %}>
+                    <div class="category-badge">{{ question.category }}</div>
+                    <h2 class="question-title">{{ question.question }}</h2>
+
+                    <div class="options">
+                        {% for option in question.options %}
+                        <label class="option-label">
+                            <input type="radio"
+                                   name="question_{{ question.id }}"
+                                   value="{{ option.value }}"
+                                   required>
+                            <span class="option-text">
+                                <span class="option-value">{{ option.value }}</span>
+                                {{ option.label }}
+                            </span>
+                        </label>
+                        {% endfor %}
+                    </div>
+
+                    <div class="navigation-buttons">
+                        {% if question.id > 1 %}
+                        <button type="button" class="btn btn-secondary" onclick="previousQuestion({{ question.id }})">
+                            ← Vorige
+                        </button>
+                        {% endif %}
+
+                        {% if question.id < questions|length %}
+                        <button type="button" class="btn btn-primary" onclick="nextQuestion({{ question.id }})">
+                            Volgende →
+                        </button>
+                        {% else %}
+                        <button type="button" class="btn btn-primary" onclick="showEmailForm()">
+                            Volgende →
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+
+                <!-- Email formulier -->
+                <div class="question-card" id="emailForm" style="display: none;">
+                    <h2 class="question-title">Bijna klaar!</h2>
+                    <p class="email-intro">Voer uw email adres in om de resultaten te ontvangen:</p>
+
+                    <div class="email-input-container">
+                        <input type="email"
+                               id="emailInput"
+                               name="email"
+                               placeholder="uw.email@bedrijf.nl"
+                               required>
+                    </div>
+
+                    <div class="consent-box">
+                        <label class="consent-label">
+                            <input type="checkbox" id="privacyConsent" required>
+                            <span>Ik ga akkoord met het ontvangen van mijn assessment resultaten per email. Mijn gegevens worden niet gedeeld met derden.</span>
+                        </label>
+                    </div>
+
+                    <div class="navigation-buttons">
+                        <button type="button" class="btn btn-secondary" onclick="hideEmailForm()">
+                            ← Vorige
+                        </button>
+                        <button type="submit" class="btn btn-success" id="submitBtn">
+                            Verstuur Assessment
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Loading indicator -->
+            <div id="loadingIndicator" style="display: none;">
+                <div class="spinner"></div>
+                <p>Uw resultaten worden verwerkt...</p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const totalQuestions = {{ questions|length }};
+        let currentQuestionNum = 1;
+        const answers = {};
+
+        function updateProgress() {
+            const progress = (currentQuestionNum / totalQuestions) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('currentQuestion').textContent = currentQuestionNum;
+        }
+
+        function nextQuestion(currentId) {
+            // Check if current question is answered
+            const selectedOption = document.querySelector(`input[name="question_${currentId}"]:checked`);
+            if (!selectedOption) {
+                alert('Selecteer een antwoord om door te gaan');
+                return;
+            }
+
+            // Save answer
+            answers[currentId] = selectedOption.value;
+
+            // Hide current question
+            document.getElementById(`question-${currentId}`).style.display = 'none';
+
+            // Show next question
+            const nextId = currentId + 1;
+            if (nextId <= totalQuestions) {
+                document.getElementById(`question-${nextId}`).style.display = 'block';
+                currentQuestionNum = nextId;
+                updateProgress();
+                window.scrollTo(0, 0);
+            }
+        }
+
+        function previousQuestion(currentId) {
+            // Hide current question
+            document.getElementById(`question-${currentId}`).style.display = 'none';
+
+            // Show previous question
+            const prevId = currentId - 1;
+            if (prevId >= 1) {
+                document.getElementById(`question-${prevId}`).style.display = 'block';
+                currentQuestionNum = prevId;
+                updateProgress();
+                window.scrollTo(0, 0);
+            }
+        }
+
+        function showEmailForm() {
+            // Check if last question is answered
+            const selectedOption = document.querySelector(`input[name="question_${totalQuestions}"]:checked`);
+            if (!selectedOption) {
+                alert('Selecteer een antwoord om door te gaan');
+                return;
+            }
+
+            // Save last answer
+            answers[totalQuestions] = selectedOption.value;
+
+            // Hide last question
+            document.getElementById(`question-${totalQuestions}`).style.display = 'none';
+
+            // Show email form
+            document.getElementById('emailForm').style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+
+        function hideEmailForm() {
+            document.getElementById('emailForm').style.display = 'none';
+            document.getElementById(`question-${totalQuestions}`).style.display = 'block';
+        }
+
+        document.getElementById('assessmentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('emailInput').value;
+            const privacyConsent = document.getElementById('privacyConsent').checked;
+
+            if (!email || !privacyConsent) {
+                alert('Vul een geldig email adres in en accepteer de privacy voorwaarden');
+                return;
+            }
+
+            // Show loading
+            document.getElementById('assessmentForm').style.display = 'none';
+            document.getElementById('loadingIndicator').style.display = 'block';
+
+            try {
+                const response = await fetch('/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        answers: answers,
+                        email: email
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    window.location.href = data.results_url;
+                } else {
+                    alert('Er is een fout opgetreden: ' + data.error);
+                    document.getElementById('assessmentForm').style.display = 'block';
+                    document.getElementById('loadingIndicator').style.display = 'none';
+                }
+            } catch (error) {
+                alert('Er is een fout opgetreden bij het versturen. Probeer het opnieuw.');
+                document.getElementById('assessmentForm').style.display = 'block';
+                document.getElementById('loadingIndicator').style.display = 'none';
+            }
+        });
+
+        // Initialize progress bar
+        updateProgress();
+    </script>
+</body>
+</html>

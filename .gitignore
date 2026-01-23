@@ -48,3 +48,7 @@ htmlcov/
 *.log
 *.tmp
 test_reports/
+
+# Environment variables
+.env
+.env.local

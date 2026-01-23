@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uw AI Governance Assessment Resultaten</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <h1>AI Governance Assessment</h1>
+            </div>
+        </header>
+
+        <main>
+            <section class="results-hero">
+                <h2>Uw Resultaten</h2>
+                {% if email_sent %}
+                <div class="email-confirmation">
+                    ✓ Een gedetailleerde versie van deze resultaten is naar uw email verstuurd
+                </div>
+                {% else %}
+                <div class="email-warning">
+                    ⚠ Er is een probleem opgetreden bij het versturen van de email. Bewaar deze pagina voor uw referentie.
+                </div>
+                {% endif %}
+            </section>
+
+            <section class="overall-score">
+                <h3>Overall AI Governance Maturity</h3>
+                <div class="score-circle {{ results.overall.level|lower }}">
+                    <div class="score-value">{{ results.overall.score }}</div>
+                    <div class="score-max">/5.0</div>
+                </div>
+                <div class="maturity-level {{ results.overall.level|lower }}">
+                    {{ results.overall.level }}
+                </div>
+                <div class="score-percentage">
+                    {{ results.overall.percentage }}% van maximale maturity
+                </div>
+            </section>
+
+            <section class="category-scores">
+                <h3>Scores per Domein</h3>
+                <div class="categories-grid">
+                    {% for category, data in results.categories.items() %}
+                    <div class="category-card">
+                        <h4>{{ category }}</h4>
+                        <div class="category-score-container">
+                            <div class="category-score {{ data.level|lower }}">
+                                {{ data.score }}
+                            </div>
+                            <div class="category-level">{{ data.level }}</div>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-fill {{ data.level|lower }}" style="width: {{ data.percentage }}%"></div>
+                        </div>
+                        <div class="percentage-text">{{ data.percentage }}%</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <section class="recommendations">
+                <h3>Gepersonaliseerde Aanbevelingen</h3>
+                {% if recommendations %}
+                <div class="recommendations-list">
+                    {% for rec in recommendations %}
+                    <div class="recommendation-card priority-{{ rec.priority|lower }}">
+                        <div class="rec-header">
+                            <span class="rec-priority">{{ rec.priority }} Prioriteit</span>
+                            <span class="rec-category">{{ rec.category }}</span>
+                        </div>
+                        <p class="rec-advice">{{ rec.advice }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="no-recommendations">
+                    <p>Uitstekend! Uw organisatie scoort goed op alle gebieden. Blijf focussen op continuous improvement en industry leadership.</p>
+                </div>
+                {% endif %}
+            </section>
+
+            <section class="next-steps">
+                <h3>Volgende Stappen</h3>
+                <div class="steps-grid">
+                    <div class="step-card">
+                        <div class="step-number">1</div>
+                        <h4>Deel met uw team</h4>
+                        <p>Bespreek deze resultaten met uw leadership team en key stakeholders</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">2</div>
+                        <h4>Prioriteer acties</h4>
+                        <p>Identificeer quick wins en strategische initiatieven op basis van de aanbevelingen</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">3</div>
+                        <h4>Maak een roadmap</h4>
+                        <p>Ontwikkel een concrete implementatie roadmap met milestones en verantwoordelijkheden</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">4</div>
+                        <h4>Meet vooruitgang</h4>
+                        <p>Herhaal deze assessment periodiek (bijvoorbeeld jaarlijks) om vooruitgang te monitoren</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="maturity-explanation">
+                <h3>Wat betekenen de Maturity Levels?</h3>
+                <div class="maturity-grid">
+                    <div class="maturity-card">
+                        <div class="maturity-marker foundational"></div>
+                        <h4>Foundational (1-2)</h4>
+                        <ul>
+                            <li>Basis bewustzijn van AI governance</li>
+                            <li>Ad-hoc processen en besluitvorming</li>
+                            <li>Beperkte documentatie en standaarden</li>
+                            <li>Reactieve benadering van risico's</li>
+                        </ul>
+                    </div>
+                    <div class="maturity-card">
+                        <div class="maturity-marker responsive"></div>
+                        <h4>Responsive (2-3)</h4>
+                        <ul>
+                            <li>Gedefinieerde processen en verantwoordelijkheden</li>
+                            <li>Basis governance structuur aanwezig</li>
+                            <li>Gedocumenteerde policies en procedures</li>
+                            <li>Regelmatige compliance checks</li>
+                        </ul>
+                    </div>
+                    <div class="maturity-card">
+                        <div class="maturity-marker proactive"></div>
+                        <h4>Proactive (3-4)</h4>
+                        <ul>
+                            <li>Proactieve risico identificatie</li>
+                            <li>Data-driven besluitvorming</li>
+                            <li>Geïntegreerde governance in workflows</li>
+                            <li>Continuous monitoring en improvement</li>
+                        </ul>
+                    </div>
+                    <div class="maturity-card">
+                        <div class="maturity-marker leader"></div>
+                        <h4>Leader (4-5)</h4>
+                        <ul>
+                            <li>Industry-leading practices</li>
+                            <li>Externe thought leadership</li>
+                            <li>Geavanceerde AI ethics en fairness</li>
+                            <li>Publieke transparantie en accountability</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section class="cta-bottom">
+                <h3>Hulp nodig bij implementatie?</h3>
+                <p>Neem contact met ons op voor een diepgaande analyse en implementatie begeleiding.</p>
+                <button class="btn btn-primary" onclick="window.print()">Print Resultaten</button>
+                <a href="/" class="btn btn-secondary">Terug naar Start</a>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 AI Governance Assessment - Assessment uitgevoerd op {{ results.timestamp[:10] }}</p>
+        </footer>
+    </div>
+
+    <style>
+        @media print {
+            .btn, header .logo, footer { display: none; }
+            .container { max-width: 100%; }
+        }
+    </style>
+</body>
+</html>
