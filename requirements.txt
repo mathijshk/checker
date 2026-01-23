@@ -1,11 +1,15 @@
 # Dependencies for AI Governance Checker
 
-# Core dependencies
-# TODO: Add specific packages as modules are implemented
+# Web Framework
+Flask==3.0.0
+Flask-Mail==0.9.1
 
-# Potential future dependencies:
-# - pandas: for data analysis
-# - reportlab: for PDF generation
-# - markdown: for markdown processing
-# - pyyaml: for configuration files
-# - click: for CLI interface
+# Email & HTML
+Jinja2==3.1.2
+
+# PDF Generation
+reportlab==4.0.7
+markdown==3.5.1
+
+# Utilities
+python-dotenv==1.0.0
