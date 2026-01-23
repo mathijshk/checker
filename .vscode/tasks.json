@@ -1,0 +1,62 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run Flask Web App",
+      "type": "shell",
+      "command": "${workspaceFolder}/venv/bin/python",
+      "args": ["app.py"],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Run Tests",
+      "type": "shell",
+      "command": "${workspaceFolder}/venv/bin/python",
+      "args": ["test_webapp.py"],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Install Dependencies",
+      "type": "shell",
+      "command": "${workspaceFolder}/venv/bin/pip",
+      "args": ["install", "-r", "requirements.txt"],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Create Virtual Environment",
+      "type": "shell",
+      "command": "python3",
+      "args": ["-m", "venv", "venv"],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Setup Project",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "Create Virtual Environment",
+        "Install Dependencies"
+      ],
+      "problemMatcher": []
+    }
+  ]
+}

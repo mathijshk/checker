@@ -1,0 +1,64 @@
+{
+  "Flask Route": {
+    "prefix": "froute",
+    "body": [
+      "@app.route('/${1:path}', methods=['${2:GET}'])",
+      "def ${3:function_name}():",
+      "\t\"\"\"${4:Description}\"\"\"",
+      "\t$0",
+      "\treturn render_template('${5:template.html}')"
+    ],
+    "description": "Create a Flask route"
+  },
+  "Flask API Route": {
+    "prefix": "fapi",
+    "body": [
+      "@app.route('/api/${1:endpoint}', methods=['${2:POST}'])",
+      "def ${3:function_name}():",
+      "\t\"\"\"${4:Description}\"\"\"",
+      "\ttry:",
+      "\t\tdata = request.get_json()",
+      "\t\t$0",
+      "\t\treturn jsonify({'success': True})",
+      "\texcept Exception as e:",
+      "\t\treturn jsonify({'error': str(e)}), 500"
+    ],
+    "description": "Create a Flask API route"
+  },
+  "Assessment Question": {
+    "prefix": "aquestion",
+    "body": [
+      "{",
+      "\t'id': ${1:1},",
+      "\t'category': '${2:Category}',",
+      "\t'question': '${3:Question text?}',",
+      "\t'options': [",
+      "\t\t{'value': 1, 'label': '${4:Option 1}'},",
+      "\t\t{'value': 2, 'label': '${5:Option 2}'},",
+      "\t\t{'value': 3, 'label': '${6:Option 3}'},",
+      "\t\t{'value': 4, 'label': '${7:Option 4}'},",
+      "\t\t{'value': 5, 'label': '${8:Option 5}'}",
+      "\t]",
+      "},"
+    ],
+    "description": "Create an assessment question"
+  },
+  "Jinja For Loop": {
+    "prefix": "jfor",
+    "body": [
+      "{% for ${1:item} in ${2:items} %}",
+      "\t$0",
+      "{% endfor %}"
+    ],
+    "description": "Jinja2 for loop"
+  },
+  "Jinja If Statement": {
+    "prefix": "jif",
+    "body": [
+      "{% if ${1:condition} %}",
+      "\t$0",
+      "{% endif %}"
+    ],
+    "description": "Jinja2 if statement"
+  }
+}

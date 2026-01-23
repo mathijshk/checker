@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "ms-python.debugpy",
+    "batisteo.vscode-django",
+    "wholroyd.jinja",
+    "ecmel.vscode-html-css",
+    "bradlc.vscode-tailwindcss",
+    "esbenp.prettier-vscode",
+    "ms-vscode.live-server"
+  ]
+}
