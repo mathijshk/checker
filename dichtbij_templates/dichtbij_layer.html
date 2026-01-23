@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ layer_data.title }} - AI-Dichtbij Framework</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dichtbij_style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="breadcrumb">
+                <a href="/">← Terug naar overzicht</a>
+            </div>
+            <div class="layer-header">
+                <span class="layer-number">Laag {{ layer_number }} van {{ total_layers }}</span>
+                <h1>{{ layer_data.title }}</h1>
+                <p class="subtitle">{{ layer_data.subtitle }}</p>
+            </div>
+        </header>
+
+        <main>
+            <section class="layer-intro">
+                <p class="intro-text">{{ layer_data.description }}</p>
+            </section>
+
+            {% if layer_data.principles %}
+            <section class="principles-section">
+                <h2>De 5 Kernwaarden</h2>
+                <div class="principles-list">
+                    {% for principle in layer_data.principles %}
+                    <div class="principle-card">
+                        <h3>{{ loop.index }}. {{ principle.name }}</h3>
+                        <p>{{ principle.description }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+
+            {% if layer_data.risks %}
+            <section class="risks-section">
+                <h2>Zes Kernrisico's</h2>
+                <div class="risks-list">
+                    {% for risk in layer_data.risks %}
+                    <div class="risk-card">
+                        <h3>{{ loop.index }}. {{ risk.name }}</h3>
+                        <p class="risk-description">{{ risk.description }}</p>
+                        <p class="risk-examples"><em>{{ risk.examples }}</em></p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+
+            {% if layer_data.zones %}
+            <section class="zones-section">
+                <h2>Drie Gebruikszones</h2>
+                <div class="zones-list">
+                    {% for zone in layer_data.zones %}
+                    <div class="zone-card" style="border-left: 4px solid {{ zone.color }}">
+                        <h3>{{ zone.name }}</h3>
+                        <p class="zone-status"><strong>{{ zone.status }}</strong></p>
+                        <ul class="zone-examples">
+                            {% for example in zone.examples %}
+                            <li>{{ example }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+
+            {% if layer_data.roles %}
+            <section class="roles-section">
+                <h2>Rollen en hun Verantwoordelijkheden</h2>
+                <div class="roles-list">
+                    {% for role in layer_data.roles %}
+                    <div class="role-card">
+                        <h3>{{ role.name }}</h3>
+                        <ul class="responsibilities">
+                            {% for resp in role.responsibilities %}
+                            <li>{{ resp }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+
+            {% if layer_data.practices %}
+            <section class="practices-section">
+                <h2>Werkende Vormen</h2>
+                <div class="practices-list">
+                    {% for practice in layer_data.practices %}
+                    <div class="practice-card">
+                        <h3>{{ practice.name }}</h3>
+                        <p>{{ practice.description }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+
+            {% if layer_data.documents %}
+            <section class="documents-section">
+                <h2>Minimale Documentenset</h2>
+                <div class="documents-list">
+                    {% for doc in layer_data.documents %}
+                    <div class="document-card">
+                        <h3>📄 {{ doc.name }}</h3>
+                        <p>{{ doc.description }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+
+            <section class="reflection-section">
+                <h2>Reflectievragen</h2>
+                <p class="reflection-intro">
+                    Gebruik deze vragen om na te denken over hoe deze laag in uw organisatie werkt:
+                </p>
+                <div class="questions-list">
+                    {% for question in layer_data.questions %}
+                    <div class="question-card">
+                        <div class="question-number">{{ loop.index }}</div>
+                        <p class="question-text">{{ question }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <section class="navigation-section">
+                <div class="nav-buttons">
+                    {% if prev_layer %}
+                    <a href="/layer/{{ prev_layer }}" class="nav-button prev">
+                        ← Vorige laag
+                    </a>
+                    {% else %}
+                    <div></div>
+                    {% endif %}
+
+                    <a href="/assessment" class="nav-button assessment">
+                        Start Assessment
+                    </a>
+
+                    {% if next_layer %}
+                    <a href="/layer/{{ next_layer }}" class="nav-button next">
+                        Volgende laag →
+                    </a>
+                    {% else %}
+                    <a href="/" class="nav-button next">
+                        Terug naar overzicht
+                    </a>
+                    {% endif %}
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 AI-Dichtbij Framework</p>
+        </footer>
+    </div>
+</body>
+</html>

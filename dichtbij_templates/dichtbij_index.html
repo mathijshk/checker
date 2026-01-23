@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Dichtbij Framework voor Verantwoord Werken met AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dichtbij_style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI-Dichtbij Framework</h1>
+            <p class="tagline">Voor Verantwoord Werken met AI</p>
+        </header>
+
+        <main>
+            <section class="hero">
+                <div class="hero-content">
+                    <h2>AI verantwoord inzetten betekent:</h2>
+                    <p class="hero-statement">
+                        Bewust kiezen waar AI helpt, begrenzen waar het schaadt,
+                        en organiseren wie verantwoordelijk is.
+                    </p>
+                </div>
+            </section>
+
+            <section class="framework-intro">
+                <h2>Het Framework</h2>
+                <p class="intro-text">
+                    Het AI-Dichtbij Framework biedt een praktische aanpak voor maatschappelijke
+                    organisaties om verantwoord met AI te werken. Het vermijdt technische en
+                    juridische overbelasting, biedt bestuurlijk houvast, en is direct toepasbaar.
+                </p>
+            </section>
+
+            <section class="layers-overview">
+                <h2>Zes Lagen van Verantwoord AI-gebruik</h2>
+                <div class="layers-grid">
+                    {% set layer_icons = {
+                        'waarden': '🧭',
+                        'risico': '⚠️',
+                        'gebruik': '🚦',
+                        'rollen': '👥',
+                        'leren': '📚',
+                        'documenten': '📋'
+                    } %}
+
+                    {% for layer_id, layer_data in framework.items() %}
+                    <div class="layer-card" onclick="window.location.href='/layer/{{ layer_id }}'">
+                        <div class="layer-icon">{{ layer_icons[layer_id] }}</div>
+                        <h3>Laag {{ loop.index }}: {{ layer_data.title }}</h3>
+                        <p class="layer-subtitle">{{ layer_data.subtitle }}</p>
+                        <p class="layer-description">{{ layer_data.description[:120] }}...</p>
+                        <div class="layer-arrow">→</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <section class="cta-section">
+                <h2>Klaar om te beginnen?</h2>
+                <div class="cta-options">
+                    <div class="cta-card">
+                        <h3>📖 Verken het Framework</h3>
+                        <p>Navigeer door de 6 lagen en leer over elk aspect van verantwoord AI-gebruik</p>
+                        <a href="/layer/waarden" class="cta-button primary">Start met Laag 1</a>
+                    </div>
+                    <div class="cta-card">
+                        <h3>✍️ Doe de Assessment</h3>
+                        <p>Beantwoord reflectievragen en genereer een persoonlijk actieplan voor uw organisatie</p>
+                        <a href="/assessment" class="cta-button secondary">Start Assessment</a>
+                    </div>
+                </div>
+            </section>
+
+            <section class="why-framework">
+                <h2>Waarom dit framework werkt</h2>
+                <div class="benefits-grid">
+                    <div class="benefit">
+                        <div class="benefit-icon">✓</div>
+                        <h4>Vermijdt overbelasting</h4>
+                        <p>Geen technische of juridische complexiteit</p>
+                    </div>
+                    <div class="benefit">
+                        <div class="benefit-icon">✓</div>
+                        <h4>Bestuurlijk houvast</h4>
+                        <p>Duidelijke rollen en verantwoordelijkheden</p>
+                    </div>
+                    <div class="benefit">
+                        <div class="benefit-icon">✓</div>
+                        <h4>AI Act compliant</h4>
+                        <p>Sluit aan zonder juridisch te worden</p>
+                    </div>
+                    <div class="benefit">
+                        <div class="benefit-icon">✓</div>
+                        <h4>Direct toepasbaar</h4>
+                        <p>Praktisch voor maatschappelijke organisaties</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 AI-Dichtbij Framework - Voor maatschappelijke organisaties</p>
+        </footer>
+    </div>
+</body>
+</html>
