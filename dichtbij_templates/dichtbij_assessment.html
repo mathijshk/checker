@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assessment - AI-Dichtbij Framework</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dichtbij_style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="breadcrumb">
+                <a href="/">← Terug naar overzicht</a>
+            </div>
+            <h1>AI-Dichtbij Assessment</h1>
+            <p class="subtitle">Reflecteer op verantwoord AI-gebruik in uw organisatie</p>
+        </header>
+
+        <main>
+            <section class="assessment-intro">
+                <p class="intro-text">
+                    Dit assessment helpt u systematisch na te denken over alle aspecten van
+                    verantwoord AI-gebruik. Beantwoord de reflectievragen zo eerlijk mogelijk.
+                    Er zijn geen goede of foute antwoorden - het gaat om reflectie en bewustwording.
+                </p>
+                <div class="assessment-info">
+                    <div class="info-item">
+                        <strong>Duur:</strong> 15-20 minuten
+                    </div>
+                    <div class="info-item">
+                        <strong>Resultaat:</strong> Persoonlijk actieplan
+                    </div>
+                    <div class="info-item">
+                        <strong>Privacy:</strong> Lokaal opgeslagen
+                    </div>
+                </div>
+            </section>
+
+            <form id="assessmentForm">
+                {% for layer_id, layer_data in framework.items() %}
+                <section class="assessment-layer">
+                    <div class="layer-header-assessment">
+                        <h2>Laag {{ loop.index }}: {{ layer_data.title }}</h2>
+                        <p class="layer-subtitle">{{ layer_data.subtitle }}</p>
+                    </div>
+
+                    <div class="questions-container">
+                        {% for question in layer_data.questions %}
+                        <div class="question-group">
+                            <label for="{{ layer_id }}_q{{ loop.index }}">
+                                <strong>Vraag {{ loop.index }}:</strong> {{ question }}
+                            </label>
+                            <textarea
+                                id="{{ layer_id }}_q{{ loop.index }}"
+                                name="{{ layer_id }}_q{{ loop.index }}"
+                                rows="4"
+                                placeholder="Typ hier uw reflectie..."
+                                class="assessment-textarea"
+                            ></textarea>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    {% if not loop.last %}
+                    <div class="layer-divider"></div>
+                    {% endif %}
+                </section>
+                {% endfor %}
+
+                <section class="contact-section">
+                    <h2>Optioneel: Contactgegevens</h2>
+                    <p>Wilt u uw actieplan per email ontvangen?</p>
+                    <div class="contact-fields">
+                        <div class="field-group">
+                            <label for="organization">Organisatie</label>
+                            <input type="text" id="organization" name="organization" placeholder="Naam van uw organisatie">
+                        </div>
+                        <div class="field-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" placeholder="uw.email@organisatie.nl">
+                        </div>
+                    </div>
+                </section>
+
+                <section class="submit-section">
+                    <button type="submit" class="submit-button">
+                        Genereer Actieplan
+                    </button>
+                </section>
+            </form>
+
+            <div id="loadingMessage" style="display: none;" class="loading">
+                <p>Uw actieplan wordt gegenereerd...</p>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 AI-Dichtbij Framework</p>
+        </footer>
+    </div>
+
+    <script>
+        document.getElementById('assessmentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Toon loading message
+            document.getElementById('loadingMessage').style.display = 'block';
+            document.querySelector('.submit-button').disabled = true;
+
+            // Verzamel alle antwoorden
+            const formData = new FormData(e.target);
+            const responses = {};
+
+            // Organiseer responses per laag
+            {% for layer_id in framework.keys() %}
+            responses['{{ layer_id }}'] = {
+                answers: []
+            };
+            {% endfor %}
+
+            for (let [key, value] of formData.entries()) {
+                if (key.includes('_q')) {
+                    const [layerId, questionNum] = key.split('_q');
+                    if (responses[layerId]) {
+                        responses[layerId].answers.push(value);
+                    }
+                } else if (key === 'organization') {
+                    responses.organization = value;
+                } else if (key === 'email') {
+                    responses.email = value;
+                }
+            }
+
+            try {
+                // Opslaan van responses
+                await fetch('/api/save-responses', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(responses)
+                });
+
+                // Ga naar resultaten pagina
+                window.location.href = '/results';
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Er is een fout opgetreden. Probeer het opnieuw.');
+                document.getElementById('loadingMessage').style.display = 'none';
+                document.querySelector('.submit-button').disabled = false;
+            }
+        });
+
+        // Auto-save functionaliteit
+        let saveTimeout;
+        document.querySelectorAll('textarea, input').forEach(element => {
+            element.addEventListener('input', () => {
+                clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(() => {
+                    // Optioneel: auto-save to localStorage
+                    const formData = new FormData(document.getElementById('assessmentForm'));
+                    const data = Object.fromEntries(formData.entries());
+                    localStorage.setItem('dichtbij_assessment_draft', JSON.stringify(data));
+                }, 1000);
+            });
+        });
+
+        // Herstel draft bij laden
+        window.addEventListener('load', () => {
+            const draft = localStorage.getItem('dichtbij_assessment_draft');
+            if (draft) {
+                const data = JSON.parse(draft);
+                for (let [key, value] of Object.entries(data)) {
+                    const element = document.getElementById(key) || document.querySelector(`[name="${key}"]`);
+                    if (element) {
+                        element.value = value;
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

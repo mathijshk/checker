@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uw Actieplan - AI-Dichtbij Framework</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dichtbij_style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Uw Persoonlijk Actieplan</h1>
+            <p class="subtitle">Op basis van uw reflectie op het AI-Dichtbij Framework</p>
+        </header>
+
+        <main>
+            <section class="results-intro">
+                <p class="intro-text">
+                    Bedankt voor het doorlopen van het assessment. Hieronder vindt u een
+                    overzicht van uw antwoorden en een gepersonaliseerd actieplan.
+                </p>
+                <div class="action-buttons">
+                    <button onclick="window.print()" class="action-button">
+                        🖨️ Afdrukken
+                    </button>
+                    <button onclick="downloadHTML()" class="action-button">
+                        💾 Download HTML
+                    </button>
+                    <button onclick="window.location.href='/assessment'" class="action-button secondary">
+                        ✏️ Bewerk Antwoorden
+                    </button>
+                </div>
+            </section>
+
+            {% if responses.organization or responses.email %}
+            <section class="contact-info">
+                <h2>Organisatie</h2>
+                {% if responses.organization %}
+                <p><strong>{{ responses.organization }}</strong></p>
+                {% endif %}
+                {% if responses.email %}
+                <p>📧 {{ responses.email }}</p>
+                {% endif %}
+            </section>
+            {% endif %}
+
+            <section class="responses-overview">
+                <h2>Uw Reflecties per Laag</h2>
+
+                {% for layer_id, layer_data in framework.items() %}
+                {% if responses.get(layer_id) and responses[layer_id].get('answers') %}
+                <div class="layer-responses">
+                    <h3>{{ layer_data.title }}: {{ layer_data.subtitle }}</h3>
+
+                    {% for answer in responses[layer_id].answers %}
+                    {% if answer and answer.strip() %}
+                    <div class="response-item">
+                        <p class="question-label">
+                            <strong>Vraag {{ loop.index }}:</strong>
+                            {{ layer_data.questions[loop.index0] }}
+                        </p>
+                        <div class="answer-box">
+                            {{ answer }}
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% endfor %}
+            </section>
+
+            <section class="action-plan" id="actionPlan">
+                <h2>Uw Actieplan</h2>
+                <div class="loading-plan">
+                    <p>Actieplan wordt gegenereerd...</p>
+                </div>
+            </section>
+
+            <section class="next-steps">
+                <h2>Aanbevolen Vervolgstappen</h2>
+                <div class="steps-grid">
+                    <div class="step-card">
+                        <div class="step-number">1</div>
+                        <h4>Deel met uw team</h4>
+                        <p>Bespreek de reflecties en het actieplan met betrokken collega's</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">2</div>
+                        <h4>Prioriteer acties</h4>
+                        <p>Kies 2-3 quick wins om direct mee te starten</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">3</div>
+                        <h4>Plan reflectiemoment</h4>
+                        <p>Zet over 3 maanden een moment in de agenda om voortgang te bespreken</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">4</div>
+                        <h4>Herhaal assessment</h4>
+                        <p>Doe het assessment na 6-12 maanden opnieuw om groei te meten</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="framework-reminder">
+                <h2>Onthoud: Verantwoord AI-gebruik is een proces, geen vinkje</h2>
+                <p class="reminder-text">
+                    Het AI-Dichtbij Framework is niet iets dat je afvinkt, maar een levend
+                    proces van reflectie, leren en verbeteren. Gebruik dit actieplan als
+                    vertrekpunt voor een continue dialoog over verantwoord AI-gebruik in
+                    uw organisatie.
+                </p>
+            </section>
+
+            <section class="resources">
+                <h2>Aanvullende Bronnen</h2>
+                <div class="resources-list">
+                    <div class="resource-item">
+                        <h4>📖 Het volledige framework</h4>
+                        <p><a href="/">Verken alle 6 lagen opnieuw</a></p>
+                    </div>
+                    <div class="resource-item">
+                        <h4>📋 Template documenten</h4>
+                        <p>Download sjablonen voor AI-principes en gebruikskaders</p>
+                    </div>
+                    <div class="resource-item">
+                        <h4>💬 Community</h4>
+                        <p>Deel ervaringen met andere maatschappelijke organisaties</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 AI-Dichtbij Framework</p>
+        </footer>
+    </div>
+
+    <script>
+        // Laad actieplan
+        async function loadActionPlan() {
+            try {
+                const responses = {{ responses | tojson }};
+                const result = await fetch('/api/generate-action-plan', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ responses })
+                });
+
+                const actionPlan = await result.json();
+                displayActionPlan(actionPlan);
+            } catch (error) {
+                console.error('Error loading action plan:', error);
+                document.querySelector('.loading-plan').innerHTML =
+                    '<p style="color: #F44336;">Fout bij laden actieplan. Probeer de pagina te verversen.</p>';
+            }
+        }
+
+        function displayActionPlan(plan) {
+            const planSection = document.getElementById('actionPlan');
+            let html = '<h2>Uw Actieplan</h2>';
+
+            // Quick wins
+            if (plan.quick_wins && plan.quick_wins.length > 0) {
+                html += '<div class="plan-section quick-wins">';
+                html += '<h3>🎯 Quick Wins (start deze week)</h3>';
+                html += '<div class="plan-items">';
+                plan.quick_wins.forEach(item => {
+                    html += `
+                        <div class="plan-item">
+                            <h4>${item.title}</h4>
+                            <p>${item.description}</p>
+                            <span class="effort-badge">Effort: ${item.effort}</span>
+                        </div>
+                    `;
+                });
+                html += '</div></div>';
+            }
+
+            // Prioriteiten
+            if (plan.priorities && plan.priorities.length > 0) {
+                html += '<div class="plan-section priorities">';
+                html += '<h3>⚡ Prioriteiten (komende maand)</h3>';
+                html += '<div class="plan-items">';
+                plan.priorities.forEach(item => {
+                    html += `
+                        <div class="plan-item">
+                            <span class="layer-badge">${item.layer}</span>
+                            <h4>${item.area}</h4>
+                            <p>${item.action}</p>
+                        </div>
+                    `;
+                });
+                html += '</div></div>';
+            }
+
+            // Lange termijn
+            if (plan.long_term && plan.long_term.length > 0) {
+                html += '<div class="plan-section long-term">';
+                html += '<h3>🎯 Lange Termijn</h3>';
+                html += '<div class="plan-items">';
+                plan.long_term.forEach(item => {
+                    html += `
+                        <div class="plan-item">
+                            <h4>${item.title}</h4>
+                            <p>${item.description}</p>
+                            <span class="timeline-badge">Timeline: ${item.timeline}</span>
+                        </div>
+                    `;
+                });
+                html += '</div></div>';
+            }
+
+            planSection.innerHTML = html;
+        }
+
+        function downloadHTML() {
+            const content = document.documentElement.outerHTML;
+            const blob = new Blob([content], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'ai-dichtbij-actieplan.html';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Laad actieplan bij pagina load
+        window.addEventListener('load', loadActionPlan);
+    </script>
+</body>
+</html>
