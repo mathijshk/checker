@@ -11,6 +11,15 @@ import calendar as cal
 from .event import Event
 
 
+# Albert Heijn kleuren (ANSI codes)
+class AHColors:
+    """Albert Heijn huisstijl kleuren"""
+    AH_BLUE = '\033[38;2;0;113;206m'
+    AH_LIGHT_BLUE = '\033[38;2;100;180;255m'
+    BOLD = '\033[1m'
+    RESET = '\033[0m'
+
+
 class CalendarManager:
     """Beheer kalender en afspraken"""
 
@@ -94,11 +103,11 @@ class CalendarManager:
 
         # Header
         output = []
-        output.append(f"\n{'='*50}")
-        output.append(f"{month_name[month]} {year}".center(50))
-        output.append(f"{'='*50}")
-        output.append("\n  Ma  Di  Wo  Do  Vr  Za  Zo")
-        output.append("-" * 50)
+        output.append(f"\n{AHColors.AH_BLUE}{'='*50}{AHColors.RESET}")
+        output.append(f"{AHColors.AH_BLUE}{AHColors.BOLD}{month_name[month]} {year}".center(50 + len(AHColors.AH_BLUE) + len(AHColors.BOLD) + len(AHColors.RESET)) + AHColors.RESET)
+        output.append(f"{AHColors.AH_BLUE}{'='*50}{AHColors.RESET}")
+        output.append(f"\n{AHColors.AH_LIGHT_BLUE}  Ma  Di  Wo  Do  Vr  Za  Zo{AHColors.RESET}")
+        output.append(f"{AHColors.AH_LIGHT_BLUE}{'-' * 50}{AHColors.RESET}")
 
         # Haal events voor deze maand op
         month_events = self.get_events_for_month(month, year)
@@ -112,16 +121,15 @@ class CalendarManager:
                     week_str += "    "
                 else:
                     day_str = f"{day:2d}"
-                    # Markeer dagen met events met een *
+                    # Markeer dagen met events met een * in AH blauw
                     if f"{day:02d}" in event_dates:
-                        day_str += "*"
+                        week_str += f"{AHColors.AH_BLUE}{day_str}*{AHColors.RESET} "
                     else:
-                        day_str += " "
-                    week_str += day_str + " "
+                        week_str += day_str + "  "
             output.append(week_str)
 
-        output.append("-" * 50)
-        output.append("* = Afspraak op deze dag")
+        output.append(f"{AHColors.AH_LIGHT_BLUE}{'-' * 50}{AHColors.RESET}")
+        output.append(f"{AHColors.AH_LIGHT_BLUE}* = Afspraak op deze dag{AHColors.RESET}")
 
         return "\n".join(output)
 
