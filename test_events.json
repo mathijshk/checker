@@ -1,0 +1,23 @@
+[
+  {
+    "title": "Lunch",
+    "date": "25-01-2026",
+    "time": "12:30",
+    "description": "Lunch met collega's",
+    "duration": 60
+  },
+  {
+    "title": "Presentatie",
+    "date": "27-01-2026",
+    "time": "10:00",
+    "description": "Q1 resultaten",
+    "duration": 120
+  },
+  {
+    "title": "Dokter",
+    "date": "03-02-2026",
+    "time": "15:30",
+    "description": "Controle afspraak",
+    "duration": 30
+  }
+]
